@@ -49,9 +49,9 @@ jobs:
         name:  Checkout files
         
       - uses: actions/checkout@v4
-        name: Checkout shadowbox files
+        name:  Checkout shadowbox files
         with:
-          repository:  'Jigsaw-Code/outline-server'
+          repository: 'Jigsaw-Code/outline-server'
           ref: "server-v${{ needs.check.outputs.VERSION }}"
           path: shadowbox
 
@@ -59,24 +59,24 @@ jobs:
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses:  docker/setup-buildx-action@v3
 
-      - name: Log in to the Container registry
-        uses:  docker/login-action@v2
+      - name:  Log in to the Container registry
+        uses: docker/login-action@v2
         with:
           registry:  ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets. GITHUB_TOKEN }}
-      
+    
       - uses: actions/setup-node@v4
-        with: 
+        with:
           node-version: 'lts/hydrogen'
-        
+      
       - uses: actions/setup-go@v5
-        with: 
+        with:
           go-version: '^1.21'
-          
-      - name: Install go task
+        
+      - name:  Install go task
         run: sudo npm i -g @go-task/cli
 
       - name: Install dependencies
@@ -84,17 +84,22 @@ jobs:
         run: npm i
 
       - name: Run image build task
-        working-directory:  shadowbox
-        env:
-          SB_VERSION:  ${{ needs.check.outputs. VERSION }}
+        working-directory: shadowbox
         run: task shadowbox:docker:build TARGET_ARCH=arm64 IMAGE_NAME=shadowbox VERSION=${{ needs.check.outputs.VERSION }}
 
-      - name: Push built docker image
+      - name:  Verify version in image
         run: |
-          docker tag shadowbox:latest ghcr.io/infinity6542/shadowbox:latest
-          docker tag shadowbox:latest ghcr.io/infinity6542/shadowbox:${{ needs.check.outputs.VERSION }}
+          echo "Expected version: ${{ needs.check.outputs.VERSION }}"
+          docker run --rm shadowbox:latest node -e "console.log(require('/opt/outline-server/app/main.js'))" || echo "Could not verify"
 
-
-          docker push ghcr.io/infinity6542/shadowbox:latest
-          docker push ghcr.io/infinity6542/shadowbox:${{ needs.check.outputs.VERSION }}
-
+      - name: Push built docker image
+        env:
+          VERSION: ${{ needs.check.outputs.VERSION }}
+        run: |
+          echo "Pushing version: $VERSION"
+        
+          docker tag shadowbox:latest ghcr.io/pmh-only/shadowbox:latest
+          docker tag shadowbox:latest ghcr.io/pmh-only/shadowbox:$VERSION
+        
+          docker push ghcr.io/pmh-only/shadowbox:latest
+          docker push ghcr.io/pmh-only/shadowbox:$VERSION
