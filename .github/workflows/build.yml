@@ -29,7 +29,7 @@ jobs:
       - id: check
         name: Run check script
         run:  |
-          chmod +x check. sh
+          chmod +x check.sh
           ./check.sh
 
       - uses: actions-js/push@master
