@@ -92,16 +92,27 @@ jobs:
             exit 1
           fi
 
-      - name:  Run image build task
+      - name: Run image build task
         working-directory: shadowbox
-        env:
-          SB_VERSION:  ${{ needs.check.outputs.VERSION }}
-        run: task shadowbox:docker:build TARGET_ARCH=arm64 IMAGE_NAME=shadowbox VERSION=${{ needs.check.outputs.VERSION }}
+        env: 
+          SB_VERSION:  ${{ needs.check.outputs. VERSION }}
+        run: |
+          echo "=== Build Configuration ==="
+          echo "VERSION parameter: ${{ needs.check.outputs.VERSION }}"
+          echo "SB_VERSION env var: $SB_VERSION"
+          echo "=========================="
+          task shadowbox:docker:build TARGET_ARCH=arm64 IMAGE_NAME=shadowbox VERSION=${{ needs.check.outputs.VERSION }} --verbose
+
 
       - name: Verify version in image
         run: |
           echo "Expected version: ${{ needs.check.outputs.VERSION }}"
-          docker run --rm shadowbox: latest node -e "console.log(require('/opt/outline-server/app/main.js'))" || echo "Could not verify"
+          # Check the version label on the Docker image
+          docker inspect shadowbox:latest | jq '.[0].Config.Labels'
+          # Try to extract version from the built JavaScript
+          docker run --rm shadowbox: latest sh -c "grep -o '__VERSION__: \"[^\"]*\"' /opt/outline-server/app/main.js | head -1" || echo "Could not find version in bundle"
+          # Alternative: Check if the version appears anywhere in the compiled code
+          docker run --rm shadowbox:latest sh -c "strings /opt/outline-server/app/main.js | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -5" || echo "No version strings found"
 
       - name: Push built docker image
         env:
