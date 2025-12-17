@@ -23,9 +23,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth:  0
 
-      - name: Install jq
-        run:  sudo apt-get update && sudo apt-get install -y jq
-
       - id: check
         name: Run check script
         run:  |
@@ -82,15 +79,6 @@ jobs:
       - name: Install dependencies
         working-directory: shadowbox
         run: npm i
-
-      - name: Verify VERSION is set
-        run: |
-          VERSION="${{ needs.check.outputs.VERSION }}"
-          echo "VERSION='$VERSION'"
-          if [ -z "$VERSION" ] || [ "$VERSION" == "null" ]; then
-            echo "ERROR: VERSION is not set correctly!"
-            exit 1
-          fi
 
       - name: Run image build task
         working-directory: shadowbox
