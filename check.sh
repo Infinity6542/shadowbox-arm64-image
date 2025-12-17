@@ -5,9 +5,9 @@ set -e  # Exit on error
 # Read previous version
 PREVIOUS_VERSION=$(cat latest 2>/dev/null || echo "")
 
-# Fetch current version with better error handling
+# Fetch current version with redirect following
 echo "Fetching latest release..."
-RESPONSE=$(curl -s -w "\n%{http_code}" https://api.github.com/repos/Jigsaw-Code/outline-server/releases/latest)
+RESPONSE=$(curl -sL -w "\n%{http_code}" https://api.github.com/repos/Jigsaw-Code/outline-server/releases/latest)
 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
 BODY=$(echo "$RESPONSE" | sed '$d')
 
