@@ -94,5 +94,7 @@ jobs:
           docker tag shadowbox:latest ghcr.io/infinity6542/shadowbox:latest
           docker tag shadowbox:latest ghcr.io/infinity6542/shadowbox:${{ needs.check.outputs.VERSION }}
 
+
           docker push ghcr.io/infinity6542/shadowbox:latest
-          docker push ghcr. io/infinity6542/shadowbox:${{ needs.check. outputs.VERSION }}
+          docker push ghcr. io/infinity6542/shadowbox:${{ needs.check.outputs.VERSION }}
+
