@@ -101,7 +101,7 @@ jobs:
           echo "VERSION parameter: ${{ needs.check.outputs.VERSION }}"
           echo "SB_VERSION env var: $SB_VERSION"
           echo "=========================="
-          task shadowbox:docker:build TARGET_ARCH=arm64 IMAGE_NAME=shadowbox VERSION=${{ needs.check.outputs.VERSION }} --verbose
+          task shadowbox:docker:build TARGET_ARCH=arm64 IMAGE_NAME=shadowbox IMAGE_VERSION=${{ needs.check.outputs.VERSION }} --verbose
 
 
       - name: Verify version in image
