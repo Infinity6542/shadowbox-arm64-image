@@ -11,5 +11,5 @@ You can use this script to install this build of Shadowbox.
 export SB_IMAGE="ghcr.io/infinity6542/shadowbox:latest"
 
 # Installation script, modified fron Jigsaw's real installation script
-curl -sL "https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh" | sed '/local MACHINE_TYPE/,/fi/{d}' | bash
+curl -sL "https://raw.githubusercontent.com/OutlineFoundation/outline-server/f9ea8edbb55a64d0324e4a4ef1a3caea752ba2e0/src/server_manager/install_scripts/install_server.sh" | sed '/local MACHINE_TYPE/,/fi/{d}' | bash
 ```
